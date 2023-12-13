@@ -7,7 +7,7 @@ const persistConfig = {
     key:'coding-dojo',
     version:1,
     storage,
-    whitelist: ['users']
+
 }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)

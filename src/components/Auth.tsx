@@ -1,82 +1,60 @@
-import { Avatar, Box, Button, Checkbox, FormControlLabel, FormGroup, TextField, Typography } from "@mui/material";
+import { Avatar, Box, Button, TextField, Typography } from "@mui/material";
 import { pink } from "@mui/material/colors";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useEffect, useState } from "react";
+import { createNewUser, createUsers } from "../store/modules/users/usersSlice";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { createNewUser } from "../store/modules/users/usersSlice";
-import { logar } from "../store/modules/user/userSlice";
+import { login } from "../store/modules/user/userSlice";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function Auth() {
   const dispatch = useAppDispatch();
   const usersRedux = useAppSelector((state) => state.users);
-  const userRedux = useAppSelector((state) => state.user);
+
   const [signup, setSignup] = useState(false);
-  const [remember, setRemember] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [nome, setNome] = useState("");
+  const [idadeToNumber, setIdadeToNumber] = useState(""); //transformar em number
+  const [tipoToUper, setTipoToUper] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
-
-  function doPasswordsMatch() {
-    return password === repeatPassword;
-  }
-
-  function isValidEmail(email: string) {
-    const emailPattern = /^[a-zA-Z0-9._-]{3,}@(gmail|outlook|hotmail)\.com$/;
-    return emailPattern.test(email);
-  }
-
-  function isValidPassword(password: string) {
-    // Verificar se tem pelo menos 4 letras
-    if (password.replace(/[^a-zA-Z]/g, "").length < 4) {
-      return false;
-    }
-
-    // Verificar se a senha é um conjunto de números sequenciais
-    const sequentialNumbers = /1234|2345|3456|4567|5678|6789|7890/;
-    return !sequentialNumbers.test(password);
-  }
-
-  function handleSubmit() {
-    if (!isValidEmail(email)) {
-      alert("Por favor, insira um e-mail válido.");
-      return;
-    }
-    if (!isValidPassword(password)) {
-      alert("A senha deve ter pelo menos 4 letras e não ser um conjunto de números sequenciais.");
-      return;
-    }
-
-    if (signup && !doPasswordsMatch()) {
-      alert("As senhas não correspondem.");
-      return;
-    }
-
-    if (signup) {
-      //dispachar criação de usuario
-      dispatch(createNewUser({ email, password }));
-
-      setSignup(!signup);
-    } else {
-      //fazert login
-      const validateLogin = usersRedux.find((i) => i.email === email && i.password === password);
-      console.log(validateLogin, "validateeeeee");
-      if (validateLogin) {
-        dispatch(logar(validateLogin));
-        alert("Você está logado, mas ao sair da página irá precisar fazer login novamente.");
-      } else {
-        alert("Email ou senha incorretos");
-      }
-      if (remember) {
-        localStorage.setItem("userLogado", JSON.stringify({ email, password }));
-        alert("Você está logado e escolheu a opção de permanecer logado. Você pode fechar a página e irá se manter lgoado.");
-      }
-    }
-  }
+  const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("users existentes ", usersRedux);
-    console.log("user logado ", userRedux);
-  }, [usersRedux, userRedux]);
+    async function getUsersFRomAPI() {
+      const res = await axios.get("http://localhost:1324/aluno");
+
+      const arrayDeUsuarios = res.data.data;
+
+      dispatch(createNewUser(arrayDeUsuarios));
+    }
+    getUsersFRomAPI();
+  }, []);
+
+  function handleSubmit() {
+    if (signup) {
+      const idade = Number(idadeToNumber);
+      const tipo = tipoToUper.toUpperCase();
+      const newUser = {
+        email,
+        password,
+        nome,
+        idade,
+        tipo,
+      };
+      dispatch(createUsers(newUser));
+    } else {
+      const exist = usersRedux.find((user) => user.email === email);
+      if (exist) {
+        dispatch(login({ email, password }));
+        navigate("/home");
+        return exist;
+      } else {
+        alert("Este usuário não existe.");
+      }
+    }
+  }
 
   return (
     <div style={{ display: "flex" }}>
@@ -97,12 +75,13 @@ export default function Auth() {
 
         <TextField sx={{ mt: 2 }} value={email} onChange={(e) => setEmail(e.target.value)} type="email" label="E-mail" required fullWidth />
         <TextField sx={{ mt: 2 }} value={password} onChange={(e) => setPassword(e.target.value)} type="password" label="Password" required fullWidth />
-        {signup && <TextField sx={{ mt: 2, mb: 2 }} value={repeatPassword} onChange={(e) => setRepeatPassword(e.target.value)} label="Repeat password" type="password" required fullWidth />}
-
-        {!signup && (
-          <FormGroup sx={{ alignSelf: "flex-start" }}>
-            <FormControlLabel control={<Checkbox onChange={(e) => setRemember(e.target.checked)} />} label="Remember-me" />
-          </FormGroup>
+        {signup && (
+          <div>
+            <TextField sx={{ mt: 2, mb: 2 }} value={repeatPassword} onChange={(e) => setRepeatPassword(e.target.value)} label="Repeat password" type="password" required fullWidth />
+            <TextField sx={{ mt: 2, mb: 2 }} value={nome} onChange={(e) => setNome(e.target.value)} label="Nome" required fullWidth />
+            <TextField sx={{ mt: 2, mb: 2 }} value={idadeToNumber} onChange={(e) => setIdadeToNumber(e.target.value)} label="Idade" required fullWidth />
+            <TextField sx={{ mt: 2, mb: 2 }} value={tipoToUper} onChange={(e) => setTipoToUper(e.target.value)} label="Tipo" required fullWidth />
+          </div>
         )}
 
         <Button onClick={handleSubmit} fullWidth variant="contained">
