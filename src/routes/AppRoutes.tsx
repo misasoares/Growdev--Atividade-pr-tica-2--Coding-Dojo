@@ -5,7 +5,7 @@ import Home from "../components/Home";
 
 const router = createBrowserRouter([
   {
-    path: "/auth",
+    path: "/",
     element: <Auth/>,
   },
   {

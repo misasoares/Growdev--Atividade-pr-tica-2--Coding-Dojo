@@ -20,7 +20,7 @@ export const login = createAsyncThunk("login/login", async (userData: UserType) 
     const response = await axios.post("http://localhost:1324/auth/", userData);
 
     const { data } = response.data;
-
+    
     if (data) {
       return {
         nome: data.nome,
@@ -63,6 +63,7 @@ const userSlice = createSlice({
         return state;
       })
       .addCase(login.fulfilled, (state, action) => {
+       
         if (action.payload) {
           state = action.payload;
         }
