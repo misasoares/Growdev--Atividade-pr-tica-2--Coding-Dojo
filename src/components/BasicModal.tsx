@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
+import { TextField } from '@mui/material';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -14,6 +15,8 @@ const style = {
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,
+    display: 'flex',
+    flexDirection: 'column'
 };
 
 interface ModalProps {
@@ -46,10 +49,15 @@ export default function BasicModal({ modal, closeModal }: ModalProps) {
                     <Typography id="modal-modal-title" variant="h6" component="h2">
                         Criar avaliação
                     </Typography>
-                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                    </Typography>
+                    
+                        <TextField label='Aluno a ser avaliado' />
+                        <TextField label='Disciplina' />
+                        <TextField label='Nota' />
+                    
                     <Button onClick={handleClose} variant='contained'>Concluir</Button>
+                    <Button onClick={handleClose} variant='contained' color='error'>Cancelar</Button>
+
+                   
                 </Box>
             </Modal>
         </div>
