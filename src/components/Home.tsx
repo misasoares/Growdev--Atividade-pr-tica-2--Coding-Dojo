@@ -29,7 +29,8 @@ export default function Home() {
     }
 
     getAvaliacoes();
-  }, [avaliacoesRedux]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [handleDelete]);
 
   async function handleDelete(id: string) {
     const res = await axios.delete(`http://localhost:1324/avaliacao/${id}`, {

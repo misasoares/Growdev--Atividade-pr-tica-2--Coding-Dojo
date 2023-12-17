@@ -3,6 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 
 export interface UsersType {
+  id: string;
   nome: string;
   email: string;
   password: string;
@@ -17,6 +18,7 @@ export const createUsers = createAsyncThunk("users/createUsers", async (dataUser
     const { data } = response.data;
 
     return {
+      id: data.id,
       nome: data.nome,
       email: data.email,
       password: data.password,
@@ -36,7 +38,7 @@ const usersSlice = createSlice({
   initialState,
   reducers: {
     createNewUser(state, action: PayloadAction<UsersType[]>) {
-      state = action.payload
+      state = action.payload;
       return state;
     },
   },
