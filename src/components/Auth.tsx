@@ -44,6 +44,7 @@ export default function Auth() {
         tipo,
       };
       dispatch(createUsers(newUser));
+      setSignup(false)
     } else {
       const exist = usersRedux.find((user) => user.email === email);
       if (exist) {
