@@ -80,7 +80,7 @@ export default function Auth() {
             <TextField sx={{ mt: 2, mb: 2 }} value={repeatPassword} onChange={(e) => setRepeatPassword(e.target.value)} label="Repeat password" type="password" required fullWidth />
             <TextField sx={{ mt: 2, mb: 2 }} value={nome} onChange={(e) => setNome(e.target.value)} label="Nome" required fullWidth />
             <TextField sx={{ mt: 2, mb: 2 }} value={idadeToNumber} onChange={(e) => setIdadeToNumber(e.target.value)} label="Idade" required fullWidth />
-            <TextField sx={{ mt: 2, mb: 2 }} value={tipoToUper} onChange={(e) => setTipoToUper(e.target.value)} label="Tipo" required fullWidth />
+            <TextField sx={{ mt: 2, mb: 2 }} value={tipoToUper} onChange={(e) => setTipoToUper(e.target.value)} label="Tipo (T, M, F)" required fullWidth />
           </div>
         )}
 

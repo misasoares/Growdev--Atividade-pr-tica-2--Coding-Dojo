@@ -3,7 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 
 export interface UsersType {
-  id: string;
+  id?: string;
   nome: string;
   email: string;
   password: string;
