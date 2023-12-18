@@ -35,6 +35,10 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleDelete]);
 
+  useEffect(() => {
+    console.log(avaliacoesRedux);
+  }, []);
+
   async function handleDelete(id: string) {
     const res = await axios.delete(`http://localhost:1324/avaliacao/${id}`, {
       headers: {
@@ -77,6 +81,7 @@ export default function Home() {
       setModal(false);
     } else {
       //atualizar
+      //TO DO - colocar os valores da avaliação definidos no modal ao abrir
       const alunoAvaliado = usersRedux.find((aluno) => aluno.nome === data.aluno);
       console.log(alunoAvaliado);
       const avaliacao = {
