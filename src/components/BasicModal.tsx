@@ -5,7 +5,6 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { Autocomplete, TextField } from "@mui/material";
 import { useAppSelector } from "../store/hooks";
-import axios from "axios";
 
 const style = {
   position: "absolute",
@@ -21,13 +20,21 @@ const style = {
   flexDirection: "column",
 };
 
-interface ModalProps {
-  modal: boolean;
-  closeModal: (arg0: boolean) => void;
+export interface DataProps {
+  aluno: string;
+  disciplina: string;
+  nota: string;
+  type: string;
 }
 
-export default function BasicModal({ modal, closeModal }: ModalProps) {
-  const userRedux = useAppSelector((state) => state.user);
+interface ModalProps {
+  openModal: boolean;
+  closeModal: (arg0: boolean) => void;
+  type: string; //"create" | "update"
+  data: (data: DataProps) => void;
+}
+
+export default function BasicModal({ openModal, closeModal, type, data }: ModalProps) {
   const usersRedux = useAppSelector((state) => state.users);
   const [inputUser, setInputUser] = React.useState("");
   const [disciplina, setDisciplina] = React.useState("");
@@ -37,34 +44,23 @@ export default function BasicModal({ modal, closeModal }: ModalProps) {
     closeModal(false);
   }
 
-  async function handleComplete() {
-    const alunoAvaliado = usersRedux.find((aluno) => aluno.nome === inputUser);
+  function handleData() {
     const avaliacao = {
-      idAlunoAvaliado: alunoAvaliado!.id,
+      aluno: inputUser,
       disciplina,
       nota,
+      type,
     };
 
-    const avaliacaoRes = await axios.post("http://localhost:1324/avaliacao", avaliacao, {
-      headers: {
-        authorization: userRedux.token,
-      },
-    });
-
-    if(avaliacaoRes.status!==201){
-        alert("Algo deu errado, revise as informações passadas.")
-        return
-    }
-
-    closeModal(false);
+    data(avaliacao);
   }
 
   return (
     <div>
-      <Modal open={modal} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+      <Modal open={openModal} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Criar avaliação
+            {type === "create" ? "Crie uma avaliação" : "Atualize a avaliação."}
           </Typography>
 
           <Autocomplete
@@ -74,10 +70,10 @@ export default function BasicModal({ modal, closeModal }: ModalProps) {
             renderInput={(params) => <TextField sx={{ margin: 1 }} {...params} name="alunos" label="Selecione um aluno" />}
           />
 
-          <TextField label="Disciplina" onChange={(e)=>setDisciplina(e.target.value)}/>
-          <TextField label="Nota(0 á 10)" onChange={(e)=>setNota(e.target.value)}/>
+          <TextField label="Disciplina" onChange={(e) => setDisciplina(e.target.value)} />
+          <TextField label="Nota(0 á 10)" onChange={(e) => setNota(e.target.value)} />
 
-          <Button onClick={handleComplete} variant="contained">
+          <Button onClick={handleData} variant="contained">
             Concluir
           </Button>
           <Button onClick={handleClose} variant="contained" color="error">

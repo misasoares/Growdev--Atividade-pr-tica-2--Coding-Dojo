@@ -1,4 +1,3 @@
-import * as React from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -11,15 +10,18 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Button } from "@mui/material";
 import { UserLogado } from "../store/modules/user/userSlice";
+import { useAppSelector } from "../store/hooks";
 
 interface TableProps {
   avaliacoes: AvaliacoesType[];
   userLogado: UserLogado;
   handleDelete: (id: string) => void;
+  handleEdit: (id: string) => void;
 }
 
-export default function TableAvaliacoes({ avaliacoes, userLogado, handleDelete }: TableProps) {
+export default function TableAvaliacoes({ avaliacoes, userLogado, handleDelete, handleEdit }: TableProps) {
   const tipoDeUser = userLogado.tipo;
+  const usersRedux = useAppSelector((state) => state.users);
 
   return (
     <TableContainer component={Paper}>
@@ -30,7 +32,7 @@ export default function TableAvaliacoes({ avaliacoes, userLogado, handleDelete }
 
             <TableCell align="right">Nota</TableCell>
 
-            <TableCell align="right">idAluno</TableCell>
+            <TableCell align="right">Aluno</TableCell>
             <TableCell align="right">Actions</TableCell>
           </TableRow>
         </TableHead>
@@ -41,7 +43,7 @@ export default function TableAvaliacoes({ avaliacoes, userLogado, handleDelete }
                 {row.disciplina}
               </TableCell>
               <TableCell align="right">{row.nota}</TableCell>
-              <TableCell align="right">{row.idAluno}</TableCell>
+              <TableCell align="right">{usersRedux.find((user) => user.id === row.idAluno)!.nome}</TableCell>
               <TableCell align="right">
                 {tipoDeUser !== "T" ? (
                   <div>
@@ -54,7 +56,7 @@ export default function TableAvaliacoes({ avaliacoes, userLogado, handleDelete }
                   </div>
                 ) : (
                   <div>
-                    <Button>
+                    <Button onClick={() => handleEdit(row.id)}>
                       <EditIcon />
                     </Button>
                     <Button onClick={() => handleDelete(row.id)}>
